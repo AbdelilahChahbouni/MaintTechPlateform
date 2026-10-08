@@ -21,9 +21,23 @@ def allowed_image(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in allowed
 
 
-# ==========================================
-# PUBLIC ROUTES
-# ==========================================
+@main_bp.route('/health')
+def health():
+    """Cloud container healthcheck endpoint."""
+    try:
+        db.session.execute(db.text("SELECT 1"))
+        return jsonify({
+            "status": "healthy",
+            "service": "mainttech-jobs-maroc",
+            "database": "connected"
+        }), 200
+    except Exception as e:
+        return jsonify({
+            "status": "unhealthy",
+            "service": "mainttech-jobs-maroc",
+            "error": str(e)
+        }), 503
+
 
 @main_bp.route('/')
 def index():
@@ -423,8 +437,15 @@ def api_talents():
                 TechnicianProfile.bio.ilike(search_pattern)
             )
         )
+    sort = request.args.get('sort', 'exp_desc').strip()
+    if sort == 'exp_asc':
+        query = query.order_by(TechnicianProfile.experience_years.asc())
+    elif sort == 'recent':
+        query = query.order_by(TechnicianProfile.id.desc())
+    else:
+        query = query.order_by(TechnicianProfile.experience_years.desc())
 
-    talents_list = query.order_by(TechnicianProfile.experience_years.desc()).all()
+    talents_list = query.all()
 
     # If logged in as recruiter, include complete contact details; otherwise anonymous
     include_contact = current_user.is_authenticated and current_user.is_recruiter

@@ -1,6 +1,7 @@
 import os
-from flask import Flask
+from flask import Flask, render_template
 from flask_login import LoginManager
+from werkzeug.middleware.proxy_fix import ProxyFix
 from config import Config
 from models import db, User
 from routes import main_bp
@@ -9,6 +10,10 @@ def create_app(config_class=Config):
     """Application factory for MaintTech Jobs Maroc."""
     app = Flask(__name__)
     app.config.from_object(config_class)
+
+    # Enable ProxyFix when running behind reverse proxies in Cloud/Docker (Cloud Run, AWS, Traefik, Nginx)
+    if app.config.get('USE_PROXY_FIX', True):
+        app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1)
 
     # Initialize database
     db.init_app(app)
@@ -32,6 +37,20 @@ def create_app(config_class=Config):
     # Register Blueprints
     app.register_blueprint(main_bp)
 
+    # Custom Error Handlers
+    @app.errorhandler(404)
+    def handle_404(e):
+        return render_template('errors/404.html'), 404
+
+    @app.errorhandler(500)
+    def handle_500(e):
+        db.session.rollback()
+        return render_template('errors/500.html'), 500
+
+    @app.errorhandler(413)
+    def handle_413(e):
+        return render_template('errors/413.html'), 413
+
     # Create tables automatically on startup if not present
     with app.app_context():
         db.create_all()
@@ -41,8 +60,10 @@ def create_app(config_class=Config):
 app = create_app()
 
 if __name__ == '__main__':
+    port = int(os.environ.get('PORT', 5000))
+    host = os.environ.get('HOST', '0.0.0.0')
     print("==================================================")
     print("  MAINTTECH JOBS - MAROC INDUSTRIAL MARKETPLACE  ")
-    print("  Server running on http://127.0.0.1:5000       ")
+    print(f"  Server running on http://{host}:{port}        ")
     print("==================================================")
-    app.run(debug=True, host='127.0.0.1', port=5000)
+    app.run(debug=os.environ.get('FLASK_DEBUG', 'False').lower() == 'true', host=host, port=port)

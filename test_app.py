@@ -215,5 +215,49 @@ class MaintTechTestCase(unittest.TestCase):
         db.session.refresh(profile)
         self.assertIsNone(profile.photo_filename)
 
+    def test_health_endpoint(self):
+        """Test cloud health check endpoint /health."""
+        res = self.client.get('/health')
+        self.assertEqual(res.status_code, 200)
+        data = json.loads(res.data)
+        self.assertEqual(data.get('status'), 'healthy')
+        self.assertEqual(data.get('database'), 'connected')
+
+    def test_404_error_page(self):
+        """Test custom 404 error page renders properly."""
+        res = self.client.get('/route-qui-n-existe-pas-404')
+        self.assertEqual(res.status_code, 404)
+        self.assertIn(b"404", response_data := res.data)
+        self.assertIn(b"non identifi", response_data)
+
+    def test_api_talents_sorting(self):
+        """Test API sorting by experience ascending and descending."""
+        u1 = User(email='sort1@test.ma', role='technician')
+        u1.set_password('pass123')
+        db.session.add(u1)
+        db.session.flush()
+
+        p1 = TechnicianProfile(user_id=u1.id, full_name='Junior Tech', experience_years=2, city='Casablanca')
+        db.session.add(p1)
+
+        u2 = User(email='sort2@test.ma', role='technician')
+        u2.set_password('pass123')
+        db.session.add(u2)
+        db.session.flush()
+
+        p2 = TechnicianProfile(user_id=u2.id, full_name='Senior Tech', experience_years=10, city='Tanger')
+        db.session.add(p2)
+        db.session.commit()
+
+        # Ascending sort
+        res_asc = self.client.get('/api/talents?sort=exp_asc')
+        data_asc = json.loads(res_asc.data)['talents']
+        self.assertEqual(data_asc[0]['experience_years'], 2)
+
+        # Descending sort
+        res_desc = self.client.get('/api/talents?sort=exp_desc')
+        data_desc = json.loads(res_desc.data)['talents']
+        self.assertEqual(data_desc[0]['experience_years'], 10)
+
 if __name__ == '__main__':
     unittest.main()

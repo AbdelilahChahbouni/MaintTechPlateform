@@ -122,10 +122,30 @@
                 <span>Filtrage instantané sans rechargement de page (Fetch API)</span>
             </div>
         </div>
+
+        <!-- Quick Filter Pills -->
+        <div class="mt-3 pt-3 border-t border-slate-100 flex flex-wrap items-center gap-2 text-xs">
+            <span class="text-slate-400 font-semibold text-[11px] uppercase mr-1">Raccourcis :</span>
+            <button type="button" class="quick-filter-chip px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-blue-50 hover:text-blue-700 text-slate-700 border border-slate-200 font-medium transition-colors" data-specialty="Automatisme">
+                ⚡ Automatisme (Siemens)
+            </button>
+            <button type="button" class="quick-filter-chip px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-blue-50 hover:text-blue-700 text-slate-700 border border-slate-200 font-medium transition-colors" data-specialty="Electromécanique">
+                ⚡ Électromécanique (VFD)
+            </button>
+            <button type="button" class="quick-filter-chip px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-blue-50 hover:text-blue-700 text-slate-700 border border-slate-200 font-medium transition-colors" data-city="Tanger">
+                📍 Tanger Med
+            </button>
+            <button type="button" class="quick-filter-chip px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-blue-50 hover:text-blue-700 text-slate-700 border border-slate-200 font-medium transition-colors" data-city="Casablanca">
+                📍 Midparc Casa
+            </button>
+            <button type="button" class="quick-filter-chip px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-blue-50 hover:text-blue-700 text-slate-700 border border-slate-200 font-medium transition-colors" data-min-exp="5">
+                💼 Senior (5+ ans)
+            </button>
+        </div>
     </div>
 
     <!-- Results Status Bar -->
-    <div class="flex items-center justify-between mb-6">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
         <div class="flex items-center gap-3">
             <h2 class="text-base font-bold text-slate-900">
                 Résultats (<span id="talent-count" class="text-blue-600 font-extrabold">{{ initial_talents|length }}</span> techniciens)
@@ -137,7 +157,15 @@
             </div>
         </div>
 
-        <span class="text-xs text-slate-400">Triés par années d'expérience</span>
+        <!-- Sorting Order Select -->
+        <div class="flex items-center gap-2">
+            <label for="filter-sort" class="text-xs text-slate-500 whitespace-nowrap">Trier par :</label>
+            <select id="filter-sort" class="text-xs font-semibold text-slate-700 bg-white border border-slate-200 rounded-lg px-2.5 py-1.5 focus:outline-none focus:ring-1 focus:ring-blue-500">
+                <option value="exp_desc">Expérience (Plus élevée)</option>
+                <option value="exp_asc">Expérience (Moins élevée)</option>
+                <option value="recent">Plus récents</option>
+            </select>
+        </div>
     </div>
 
     <!-- Empty State -->

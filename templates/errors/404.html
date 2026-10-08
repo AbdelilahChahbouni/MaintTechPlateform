@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block title %}Page Non Trouvée (404) | MaintTech Jobs Maroc{% endblock %}
+
+{% block content %}
+<div class="min-h-[70vh] flex items-center justify-center py-16 px-4 bg-slate-50">
+    <div class="max-w-md w-full text-center space-y-6">
+        <div class="w-20 h-20 rounded-3xl bg-blue-50 text-blue-600 flex items-center justify-center mx-auto text-3xl font-extrabold shadow-sm border border-blue-100">
+            <i class="fa-solid fa-triangle-exclamation text-amber-500"></i>
+        </div>
+        
+        <div>
+            <span class="text-xs font-bold text-blue-600 uppercase tracking-widest block mb-1">Erreur 404 • Arrêt Imprévu</span>
+            <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">Ligne non identifiée</h1>
+            <p class="text-slate-600 text-sm mt-2 leading-relaxed">
+                La ressource industrielle demandée ou le profil recherché est introuvable ou a été déplacé.
+            </p>
+        </div>
+
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
+            <a href="{{ url_for('main.index') }}" class="w-full sm:w-auto px-5 py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs rounded-xl shadow-sm transition-all flex items-center justify-center gap-2">
+                <i class="fa-solid fa-house text-xs"></i>
+                <span>Retour à l'Accueil</span>
+            </a>
+            <a href="{{ url_for('main.talents') }}" class="w-full sm:w-auto px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl shadow-sm transition-all flex items-center justify-center gap-2">
+                <i class="fa-solid fa-users-viewfinder text-xs"></i>
+                <span>Vivier des Talents</span>
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

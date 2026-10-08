@@ -34,33 +34,43 @@
 ```
 test-anti/
 │
-├── app.py                     # Initialisation de l'application Flask et extensions
-├── config.py                  # Configuration SQLite / PostgreSQL, uploads et secrets
+├── Dockerfile                 # Configuration Docker production multi-stage avec utilisateur non-root
+├── docker-compose.yml         # Orchestration complète Web (Flask/Gunicorn) + DB (PostgreSQL 16)
+├── docker-entrypoint.sh       # Script de démarrage avec auto-seed et adaptation dynamique du port
+├── .dockerignore              # Optimisation du contexte de build Docker
+├── .env.example               # Modèle des variables d'environnement de production
+├── app.py                     # Initialisation Flask, ProxyFix et gestionnaires d'erreurs
+├── config.py                  # Configuration SQLite/PostgreSQL, pool de connexions et cookies sécurisés
 ├── models.py                  # Modèles SQLAlchemy (User, TechnicianProfile, RecruiterProfile)
-├── routes.py                  # Routes Auth, Dashboard, Vivier des Talents, API JSON et Téléchargement CV
+├── routes.py                  # Routes Auth, Dashboard, Talents, API JSON, Healthcheck & Uploads
 ├── seed.py                    # Script de peuplement avec 6 techniciens marocains et 2 recruteurs
-├── test_app.py                # Suite de tests unitaires automatisés
-├── requirements.txt           # Dépendances Python
-├── README.md                  # Documentation technique et guide d'exécution
+├── test_app.py                # Suite de 9 tests unitaires automatisés
+├── requirements.txt           # Dépendances Python (Flask, Gunicorn, Psycopg2, SQLAlchemy)
+├── README.md                  # Documentation technique et guides de déploiement Cloud
 │
 ├── static/
 │   ├── css/
 │   │   └── custom.css         # Typographie, gradients industriels et scrollbar
 │   └── js/
 │       ├── main.js            # Menu mobile, auto-dismiss des alertes flash, tag picker
-│       └── talents.js         # Filtrage en temps réel via Fetch API & rendu dynamique des cartes
+│       └── talents.js         # Filtrage en temps réel via Fetch API & tri dynamique
 │
 ├── templates/
-│   ├── base.html              # Layout principal avec Navbar réactive, alertes et footer
-│   ├── index.html             # Page d'accueil avec Pôles marocains et top 3 talents dynamiques
-│   ├── talents.html           # Vivier des talents avec panneau de filtres et grille dynamique
-│   ├── talent_detail.html     # Dossier complet du technicien (coordonnées directes / téléchargement CV)
-│   ├── dashboard.html         # Tableau de bord adaptatif (Technicien ou Recruteur)
+│   ├── base.html              # Layout principal avec favicon SVG, métadonnées SEO et navbar
+│   ├── index.html             # Landing page avec Pôles marocains, Témoignages usines et FAQ
+│   ├── talents.html           # Vivier des talents avec puces raccourcis et sélecteur de tri
+│   ├── talent_detail.html     # Dossier complet du technicien (coordonnées directes / CV)
+│   ├── dashboard.html         # Tableau de bord avec prévisualisation photo en direct
 │   ├── login.html             # Page de connexion avec boutons de remplissage démo en 1 clic
-│   └── register.html          # Inscription avec sélecteur de rôle interactif (Technicien vs Recruteur)
+│   ├── register.html          # Inscription avec sélecteur de rôle interactif
+│   └── errors/
+│       ├── 404.html           # Page d'erreur 404 brandée industrielle
+│       ├── 500.html           # Page d'erreur 500 pour maintenance serveur
+│       └── 413.html           # Page d'erreur 413 pour fichiers volumineux
 │
 └── uploads/
-    └── cvs/                   # Répertoire de stockage sécurisé des CVs
+    ├── cvs/                   # Répertoire de stockage sécurisé des CVs
+    └── avatars/               # Répertoire de stockage des photos de profil
 ```
 
 ---
@@ -151,15 +161,85 @@ Pour faciliter vos tests, la page de connexion (`/login`) dispose de **boutons e
 
 ---
 
-## 🔄 Passage en Production (PostgreSQL)
+## 🐳 Déploiement avec Docker & Docker Compose
 
-Pour basculer de SQLite vers PostgreSQL en production :
-1. Définissez la variable d'environnement `DATABASE_URL` :
+L'application est conteneurisée et prête pour la production avec un serveur WSGI haute performance **Gunicorn (4 workers, 2 threads)** et une base de données **PostgreSQL 16**.
+
+### 1. Lancement Local / Serveur en 1 Commande avec Docker Compose
+```bash
+docker compose up -d --build
+```
+L'application démarre automatiquement sur : **`http://localhost:5000`**
+- Le service `db` (PostgreSQL 16) démarre avec volume persistant `postgres_data`.
+- L'application Flask attend que la base de données soit saine (`service_healthy`).
+- Le script `docker-entrypoint.sh` peuple automatiquement la base de données (`AUTO_SEED=true`) avec les 6 techniciens marocains et les comptes démo.
+- Les CVs et photos de profil sont persistés dans le volume `uploads_data`.
+
+Pour vérifier les logs :
+```bash
+docker compose logs -f web
+```
+
+Pour arrêter les services :
+```bash
+docker compose down
+```
+
+---
+
+## ☁️ Déploiement chez les Fournisseurs Cloud
+
+### 1. Déploiement Serverless sur Google Cloud Run
+```bash
+# Authentification et configuration du projet
+gcloud auth login
+gcloud config set project YOUR_PROJECT_ID
+
+# Build et push de l'image
+gcloud builds submit --tag gcr.io/YOUR_PROJECT_ID/mainttech-jobs
+
+# Déploiement instantané
+gcloud run deploy mainttech-jobs \
+  --image gcr.io/YOUR_PROJECT_ID/mainttech-jobs \
+  --platform managed \
+  --region europe-west1 \
+  --allow-unauthenticated \
+  --set-env-vars "SECRET_KEY=votre_cle_secrete,AUTO_SEED=true,DATABASE_URL=postgresql://user:pass@host:5432/dbname"
+```
+
+### 2. Déploiement sur Render / Railway / Fly.io
+1. Connectez votre dépôt GitHub à **Render** ou **Railway**.
+2. Créez une base de données **PostgreSQL managée** en un clic.
+3. Créez un nouveau **Web Service (Docker)** pointant sur le `Dockerfile`.
+4. Ajoutez les variables d'environnement définies dans `.env.example` :
+   - `DATABASE_URL` (fournie automatiquement par Render/Railway)
+   - `SECRET_KEY`
+   - `AUTO_SEED=true`
+   - `PORT=5000` (ou valeur attribuée par la plateforme)
+5. Le service est en ligne avec SSL automatique et healthcheck actif sur `/health`.
+
+### 3. Déploiement sur AWS App Runner / ECS (Fargate)
+1. Poussez l'image vers **Amazon ECR** :
    ```bash
-   export DATABASE_URL="postgresql://user:password@localhost:5432/mainttech_prod"
+   aws ecr get-login-password --region eu-west-3 | docker login --username AWS --password-stdin YOUR_ACCOUNT_ID.dkr.ecr.eu-west-3.amazonaws.com
+   docker build -t mainttech-jobs .
+   docker tag mainttech-jobs:latest YOUR_ACCOUNT_ID.dkr.ecr.eu-west-3.amazonaws.com/mainttech-jobs:latest
+   docker push YOUR_ACCOUNT_ID.dkr.ecr.eu-west-3.amazonaws.com/mainttech-jobs:latest
    ```
-2. Installez `psycopg2-binary` :
-   ```bash
-   pip install psycopg2-binary
-   ```
-3. L'application détecte automatiquement PostgreSQL et gère les préfixes `postgres://` et `postgresql://`.
+2. Créez un service **AWS App Runner** lié à l'image ECR.
+3. Configurez le port `5000` et la sonde de santé sur `/health`.
+
+---
+
+## 🔍 Sonde de Santé Cloud (`/health`)
+
+Pour surveiller l'état de l'application et de sa base de données (Kubernetes liveness/readiness probes, AWS ALB, Uptime Kuma) :
+- `GET /health`
+- Réponse `200 OK` :
+  ```json
+  {
+    "database": "connected",
+    "service": "mainttech-jobs-maroc",
+    "status": "healthy"
+  }
+  ```

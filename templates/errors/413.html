@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block title %}Fichier Volumineux (413) | MaintTech Jobs Maroc{% endblock %}
+
+{% block content %}
+<div class="min-h-[70vh] flex items-center justify-center py-16 px-4 bg-slate-50">
+    <div class="max-w-md w-full text-center space-y-6">
+        <div class="w-20 h-20 rounded-3xl bg-amber-50 text-amber-600 flex items-center justify-center mx-auto text-3xl font-extrabold shadow-sm border border-amber-100">
+            <i class="fa-solid fa-file-circle-exclamation"></i>
+        </div>
+        
+        <div>
+            <span class="text-xs font-bold text-amber-600 uppercase tracking-widest block mb-1">Erreur 413 • Capacité Dépassée</span>
+            <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">Fichier Trop Lourd</h1>
+            <p class="text-slate-600 text-sm mt-2 leading-relaxed">
+                Le fichier sélectionné dépasse la limite maximale autorisée (16 Mo). Veuillez compresser votre CV ou votre photo avant de réitérer l'envoi.
+            </p>
+        </div>
+
+        <div class="pt-2">
+            <a href="{{ url_for('main.dashboard') }}" class="inline-flex items-center gap-2 px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl shadow-sm transition-all">
+                <i class="fa-solid fa-arrow-left text-xs"></i>
+                <span>Retour au Tableau de Bord</span>
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

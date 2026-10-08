@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block title %}Panne Serveur (500) | MaintTech Jobs Maroc{% endblock %}
+
+{% block content %}
+<div class="min-h-[70vh] flex items-center justify-center py-16 px-4 bg-slate-50">
+    <div class="max-w-md w-full text-center space-y-6">
+        <div class="w-20 h-20 rounded-3xl bg-red-50 text-red-600 flex items-center justify-center mx-auto text-3xl font-extrabold shadow-sm border border-red-100">
+            <i class="fa-solid fa-screwdriver-wrench"></i>
+        </div>
+        
+        <div>
+            <span class="text-xs font-bold text-red-600 uppercase tracking-widest block mb-1">Erreur 500 • Arrêt Technique</span>
+            <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">Maintenance en Cours</h1>
+            <p class="text-slate-600 text-sm mt-2 leading-relaxed">
+                Une interruption temporaire est survenue sur nos serveurs. Notre équipe d'astreinte est déjà sur le diagnostic.
+            </p>
+        </div>
+
+        <div class="pt-2">
+            <a href="{{ url_for('main.index') }}" class="inline-flex items-center gap-2 px-6 py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs rounded-xl shadow-sm transition-all">
+                <i class="fa-solid fa-arrow-rotate-right text-xs"></i>
+                <span>Réessayer la connexion</span>
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -13,9 +13,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const searchInput = document.getElementById('filter-search');
     const citySelect = document.getElementById('filter-city');
     const specialtySelect = document.getElementById('filter-specialty');
-    const expSelect = document.getElementById('filter-experience');
+    const sortSelect = document.getElementById('filter-sort');
     const mobilityCheck = document.getElementById('filter-mobility');
     const resetBtn = document.getElementById('btn-reset-filters');
+    const quickChips = document.querySelectorAll('.quick-filter-chip');
 
     if (!talentsGrid) return;
 
@@ -59,6 +60,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         if (mobilityCheck && mobilityCheck.checked) {
             params.append('mobility', 'true');
+        }
+        if (sortSelect && sortSelect.value) {
+            params.append('sort', sortSelect.value);
         }
 
         try {
@@ -219,6 +223,23 @@ document.addEventListener('DOMContentLoaded', () => {
     if (specialtySelect) specialtySelect.addEventListener('change', fetchTalents);
     if (expSelect) expSelect.addEventListener('change', fetchTalents);
     if (mobilityCheck) mobilityCheck.addEventListener('change', fetchTalents);
+    if (sortSelect) sortSelect.addEventListener('change', fetchTalents);
+
+    // Quick filter chips click handler
+    quickChips.forEach(chip => {
+        chip.addEventListener('click', () => {
+            if (chip.dataset.specialty && specialtySelect) {
+                specialtySelect.value = chip.dataset.specialty;
+            }
+            if (chip.dataset.city && citySelect) {
+                citySelect.value = chip.dataset.city;
+            }
+            if (chip.dataset.minExp && expSelect) {
+                expSelect.value = chip.dataset.minExp;
+            }
+            fetchTalents();
+        });
+    });
 
     if (resetBtn) {
         resetBtn.addEventListener('click', () => {
@@ -227,6 +248,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (specialtySelect) specialtySelect.value = 'all';
             if (expSelect) expSelect.value = 'all';
             if (mobilityCheck) mobilityCheck.checked = false;
+            if (sortSelect) sortSelect.value = 'exp_desc';
             fetchTalents();
         });
     }
