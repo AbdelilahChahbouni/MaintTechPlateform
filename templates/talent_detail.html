@@ -1,0 +1,214 @@
+{% extends "base.html" %}
+
+{% block title %}Profil Technicien : {{ talent.full_name if can_view_contact else talent.anonymous_name }} | MaintTech Jobs Maroc{% endblock %}
+
+{% block content %}
+<div class="bg-slate-900 text-white py-10 border-b border-slate-800">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        <a href="{{ url_for('main.talents') }}" class="inline-flex items-center gap-2 text-xs font-semibold text-slate-400 hover:text-white transition-colors mb-6">
+            <i class="fa-solid fa-arrow-left"></i>
+            <span>Retour au vivier des talents</span>
+        </a>
+
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+            <div class="flex items-center gap-4">
+                {% if talent.photo_filename %}
+                    <img src="{{ url_for('main.serve_avatar', filename=talent.photo_filename) }}" alt="{{ talent.full_name }}" class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl object-cover shadow-lg border-2 border-slate-700">
+                {% else %}
+                    <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-gradient-to-tr from-slate-800 to-blue-700 text-white flex items-center justify-center font-extrabold text-2xl shadow-lg border border-slate-700">
+                        {% if can_view_contact %}
+                            {{ talent.full_name[:2]|upper }}
+                        {% else %}
+                            {{ talent.anonymous_name[:2]|upper }}
+                        {% endif %}
+                    </div>
+                {% endif %}
+                <div>
+                    <div class="flex items-center gap-3">
+                        <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight">
+                            {% if can_view_contact %}
+                                {{ talent.full_name }}
+                            {% else %}
+                                {{ talent.anonymous_name }}
+                            {% endif %}
+                        </h1>
+                        {% if can_view_contact %}
+                            <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+                                <i class="fa-solid fa-circle-check mr-1"></i> Vérifié
+                            </span>
+                        {% else %}
+                            <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold bg-amber-500/20 text-amber-400 border border-amber-500/30">
+                                <i class="fa-solid fa-user-shield mr-1"></i> Profil Anonymisé
+                            </span>
+                        {% endif %}
+                    </div>
+                    <p class="text-blue-400 text-sm font-semibold uppercase tracking-wider mt-1">{{ talent.specialty }}</p>
+                    <div class="flex flex-wrap items-center gap-3 text-xs text-slate-300 mt-2">
+                        <span><i class="fa-solid fa-location-dot text-red-400 mr-1"></i> {{ talent.city }}</span>
+                        <span class="text-slate-600">•</span>
+                        <span><i class="fa-solid fa-briefcase text-slate-400 mr-1"></i> {{ talent.experience_years }} ans d'expérience</span>
+                        <span class="text-slate-600">•</span>
+                        {% if talent.mobility %}
+                            <span class="text-emerald-400"><i class="fa-solid fa-check mr-1"></i> Mobile partout au Maroc</span>
+                        {% else %}
+                            <span class="text-slate-400"><i class="fa-solid fa-location-crosshairs mr-1"></i> Mobilité régionale uniquement</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Header Quick Action (CV Download or Recruiter Prompt) -->
+            {% if can_view_contact and talent.cv_filename %}
+                <a href="{{ url_for('main.download_cv', talent_id=talent.id) }}" class="inline-flex items-center gap-2 px-5 py-3 bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs rounded-xl shadow-lg shadow-blue-500/20 transition-all self-start md:self-auto">
+                    <i class="fa-solid fa-file-arrow-down text-sm"></i>
+                    <span>Télécharger le CV Complet</span>
+                </a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        
+        <!-- Left 2 Cols: Technical Details & Bio -->
+        <div class="lg:col-span-2 space-y-6">
+            
+            <!-- Bio Section -->
+            <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
+                <h2 class="text-base font-bold text-slate-900 mb-3 flex items-center gap-2">
+                    <i class="fa-solid fa-id-card-clip text-blue-600"></i>
+                    <span>Présentation & Parcours Technique</span>
+                </h2>
+                <p class="text-slate-700 text-sm leading-relaxed whitespace-pre-line">
+                    {{ talent.bio or "Technicien de maintenance industrielle rigoureux et passionné par l'optimisation des équipements de production." }}
+                </p>
+            </div>
+
+            <!-- Skills Matrix -->
+            <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
+                <h2 class="text-base font-bold text-slate-900 mb-4 flex items-center gap-2">
+                    <i class="fa-solid fa-screwdriver-wrench text-blue-600"></i>
+                    <span>Matériel, Automates & Compétences Maîtrisées</span>
+                </h2>
+
+                <div class="flex flex-wrap gap-2">
+                    {% for skill in talent.skills_list %}
+                        <div class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-semibold bg-slate-50 text-slate-900 border border-slate-200 hover:border-blue-400 transition-colors">
+                            <i class="fa-solid fa-microchip text-blue-600"></i>
+                            <span>{{ skill }}</span>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Professional Industrial Standards -->
+            <div class="bg-slate-900 text-white rounded-2xl p-6 shadow-sm space-y-3">
+                <h3 class="text-sm font-bold text-white flex items-center gap-2">
+                    <i class="fa-solid fa-shield-halved text-amber-400"></i>
+                    <span>Conformité & Sécurité Industrielle</span>
+                </h3>
+                <p class="text-slate-300 text-xs leading-relaxed">
+                    Ce profil a été vérifié conformément aux standards de maintenance des parcs industriels marocains (Habilitations électriques BT/HTA, consignation LOTO, respect des normes 5S et TPM).
+                </p>
+            </div>
+
+        </div>
+
+        <!-- Right Col: Contact & Recruiter Actions Box -->
+        <div class="space-y-6">
+            
+            {% if can_view_contact %}
+                <!-- UNLOCKED CONTACT CARD -->
+                <div class="bg-white rounded-2xl border-2 border-emerald-500/40 p-6 shadow-md space-y-5">
+                    <div class="flex items-center gap-2 text-emerald-700 font-bold text-xs uppercase tracking-wider">
+                        <i class="fa-solid fa-address-book"></i> Coordonnées Directes Recruteur
+                    </div>
+
+                    <div class="space-y-3 text-xs">
+                        <div class="p-3 rounded-xl bg-slate-50 border border-slate-200">
+                            <span class="text-slate-400 block mb-0.5">Téléphone direct :</span>
+                            <a href="tel:{{ talent.phone }}" class="text-slate-900 font-bold text-sm hover:text-blue-600 flex items-center gap-2">
+                                <i class="fa-solid fa-phone text-emerald-600"></i>
+                                <span>{{ talent.phone or "Non renseigné" }}</span>
+                            </a>
+                        </div>
+
+                        <div class="p-3 rounded-xl bg-slate-50 border border-slate-200">
+                            <span class="text-slate-400 block mb-0.5">Email du technicien :</span>
+                            <a href="mailto:{{ talent.user.email }}" class="text-slate-900 font-bold text-xs hover:text-blue-600 flex items-center gap-2 break-all">
+                                <i class="fa-solid fa-envelope text-blue-600"></i>
+                                <span>{{ talent.user.email }}</span>
+                            </a>
+                        </div>
+                    </div>
+
+                    {% if talent.cv_filename %}
+                        <div class="pt-2">
+                            <a href="{{ url_for('main.download_cv', talent_id=talent.id) }}" class="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl shadow-sm transition-colors">
+                                <i class="fa-solid fa-download"></i>
+                                <span>Télécharger le CV ({{ talent.cv_filename.rsplit('.', 1)[1]|upper }})</span>
+                            </a>
+                        </div>
+                    {% endif %}
+
+                    {% if talent.phone %}
+                        <a href="https://wa.me/{{ talent.phone|replace(' ', '')|replace('+', '') }}?text=Bonjour%20{{ talent.full_name|urlencode }},%20nous%20avons%20vu%20votre%20profil%20sur%20MaintTech%20Jobs%20Maroc." target="_blank" class="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow-sm transition-colors">
+                            <i class="fa-brands fa-whatsapp text-sm"></i>
+                            <span>Contacter via WhatsApp</span>
+                        </a>
+                    {% endif %}
+                </div>
+            {% else %}
+                <!-- LOCKED CONTACT CARD FOR GUESTS -->
+                <div class="bg-gradient-to-br from-slate-900 to-slate-800 text-white rounded-2xl p-6 shadow-xl space-y-4">
+                    <div class="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center text-lg">
+                        <i class="fa-solid fa-lock"></i>
+                    </div>
+
+                    <h3 class="text-base font-extrabold">Coordonnées Protégées</h3>
+                    <p class="text-slate-300 text-xs leading-relaxed">
+                        Pour préserver la tranquillité des techniciens, les coordonnées téléphoniques, l'adresse email et le CV complet sont accessibles exclusivement aux recruteurs industriels certifiés.
+                    </p>
+
+                    <div class="space-y-2 pt-2">
+                        <a href="{{ url_for('main.login') }}?next={{ request.path }}" class="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs rounded-xl shadow transition-colors">
+                            <i class="fa-solid fa-right-to-bracket"></i>
+                            <span>Se Connecter en tant que Recruteur</span>
+                        </a>
+                        <a href="{{ url_for('main.register') }}?role=recruiter" class="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs rounded-xl border border-slate-700 transition-colors">
+                            <i class="fa-solid fa-building"></i>
+                            <span>Créer un Compte Usine / RH</span>
+                        </a>
+                    </div>
+                </div>
+            {% endif %}
+
+            <!-- Quick Specs Sidebar -->
+            <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm space-y-3 text-xs">
+                <h4 class="font-bold text-slate-900 uppercase tracking-wider text-[11px] mb-2">Fiche Synthétique</h4>
+                <div class="flex justify-between py-1.5 border-b border-slate-100">
+                    <span class="text-slate-500">Ville principale</span>
+                    <span class="font-bold text-slate-800">{{ talent.city }}</span>
+                </div>
+                <div class="flex justify-between py-1.5 border-b border-slate-100">
+                    <span class="text-slate-500">Expérience globale</span>
+                    <span class="font-bold text-slate-800">{{ talent.experience_years }} ans</span>
+                </div>
+                <div class="flex justify-between py-1.5 border-b border-slate-100">
+                    <span class="text-slate-500">Mobilité Maroc</span>
+                    <span class="font-bold {% if talent.mobility %}text-emerald-600{% else %}text-slate-600{% endif %}">
+                        {{ "Oui (Tout le Maroc)" if talent.mobility else "Régionale" }}
+                    </span>
+                </div>
+                <div class="flex justify-between py-1.5">
+                    <span class="text-slate-500">Disponibilité</span>
+                    <span class="font-bold text-emerald-600">Immédiate</span>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+{% endblock %}

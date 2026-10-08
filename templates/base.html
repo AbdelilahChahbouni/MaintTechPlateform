@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="fr" class="h-full bg-slate-50">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}MaintTech Jobs | Plateforme des Talents de Maintenance Industrielle au Maroc{% endblock %}</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            800: '#1e40af',
+                            900: '#1e3a8a',
+                        },
+                        industrial: {
+                            dark: '#0f172a',
+                            slate: '#1e293b',
+                            amber: '#f59e0b',
+                            steel: '#334155'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Font Awesome 6 Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- Google Fonts & Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/custom.css') }}">
+    
+    {% block head %}{% endblock %}
+</head>
+<body class="flex flex-col min-h-full text-slate-800 antialiased selection:bg-blue-600 selection:text-white">
+
+    <!-- Top Announcement Bar (Moroccan Industrial Ecosystem) -->
+    <div class="bg-slate-900 text-slate-300 text-xs py-2 px-4 border-b border-slate-800">
+        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-2">
+            <div class="flex items-center gap-2">
+                <span class="inline-flex items-center px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-400 font-semibold text-[10px] uppercase tracking-wide">Écosystème Maroc</span>
+                <span>Hub de Recrutement Spécialisé : Tanger Med, Midparc, Atlantic Free Zone & OCP.</span>
+            </div>
+            <div class="flex items-center gap-4 text-[11px] text-slate-400">
+                <span class="flex items-center gap-1"><i class="fa-solid fa-bolt text-amber-400"></i> +6 Profils Certifiés en Démo</span>
+                <span class="hidden md:inline text-slate-600">|</span>
+                <span class="flex items-center gap-1"><i class="fa-solid fa-headset text-blue-400"></i> Support RH Industriel 24/7</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Navigation Bar -->
+    <nav class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200/80 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
+                
+                <!-- Logo & Brand -->
+                <div class="flex items-center gap-8">
+                    <a href="{{ url_for('main.index') }}" class="flex items-center gap-3 group">
+                        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-slate-900 to-blue-700 flex items-center justify-center text-white shadow-md shadow-blue-500/10 group-hover:scale-105 transition-transform">
+                            <i class="fa-solid fa-gears text-lg text-amber-400"></i>
+                        </div>
+                        <div>
+                            <span class="text-xl font-extrabold tracking-tight text-slate-900 block leading-tight">
+                                Maint<span class="text-blue-600">Tech</span> <span class="text-xs font-semibold px-1.5 py-0.5 rounded bg-amber-100 text-amber-800 ml-1">MAROC</span>
+                            </span>
+                            <span class="text-[10px] font-medium text-slate-500 tracking-wider uppercase block">Talents de Maintenance Industrielle</span>
+                        </div>
+                    </a>
+
+                    <!-- Desktop Navigation Links -->
+                    <div class="hidden md:flex items-center space-x-6 text-sm font-semibold text-slate-600">
+                        <a href="{{ url_for('main.index') }}" class="hover:text-blue-600 transition-colors py-1">Accueil</a>
+                        <a href="{{ url_for('main.talents') }}" class="hover:text-blue-600 transition-colors py-1 flex items-center gap-1.5">
+                            <i class="fa-solid fa-users-viewfinder text-blue-500"></i>
+                            <span>Vivier des Talents</span>
+                        </a>
+                        <a href="{{ url_for('main.index') }}#zones-industrielles" class="hover:text-blue-600 transition-colors py-1">Pôles Industriels</a>
+                        <a href="{{ url_for('main.index') }}#comment-ca-marche" class="hover:text-blue-600 transition-colors py-1">Processus</a>
+                    </div>
+                </div>
+
+                <!-- Auth Buttons / User Profile Navigation -->
+                <div class="hidden md:flex items-center gap-3">
+                    {% if current_user.is_authenticated %}
+                        <div class="flex items-center gap-3">
+                            <div class="text-right">
+                                <span class="text-xs font-bold text-slate-900 block leading-tight">
+                                    {% if current_user.is_technician and current_user.technician_profile %}
+                                        {{ current_user.technician_profile.full_name }}
+                                    {% elif current_user.is_recruiter and current_user.recruiter_profile %}
+                                        {{ current_user.recruiter_profile.company_name }}
+                                    {% else %}
+                                        {{ current_user.email }}
+                                    {% endif %}
+                                </span>
+                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold {% if current_user.is_recruiter %}bg-amber-100 text-amber-800{% else %}bg-blue-100 text-blue-800{% endif %}">
+                                    <i class="fa-solid {% if current_user.is_recruiter %}fa-building mr-1{% else %}fa-wrench mr-1{% endif %}"></i>
+                                    {{ "Recruteur" if current_user.is_recruiter else "Technicien" }}
+                                </span>
+                            </div>
+
+                            <a href="{{ url_for('main.dashboard') }}" class="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-800 font-semibold text-xs transition-colors">
+                                <i class="fa-solid fa-gauge-high"></i>
+                                <span>Mon Espace</span>
+                            </a>
+
+                            <a href="{{ url_for('main.logout') }}" class="p-2 rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 transition-colors" title="Se déconnecter">
+                                <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                            </a>
+                        </div>
+                    {% else %}
+                        <a href="{{ url_for('main.login') }}" class="text-sm font-semibold text-slate-700 hover:text-blue-600 px-3 py-2 transition-colors">
+                            Connexion
+                        </a>
+                        <a href="{{ url_for('main.register') }}" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs shadow-sm shadow-blue-500/20 transition-all hover:shadow-md">
+                            <i class="fa-solid fa-user-plus"></i>
+                            <span>Créer un Compte</span>
+                        </a>
+                    {% endif %}
+                </div>
+
+                <!-- Mobile menu button -->
+                <div class="flex items-center md:hidden">
+                    <button type="button" id="mobile-menu-button" class="p-2 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100 focus:outline-none" aria-label="Toggle menu">
+                        <i class="fa-solid fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Navigation Menu Dropdown -->
+        <div id="mobile-menu" class="hidden md:hidden border-t border-slate-200 bg-white px-4 pt-3 pb-6 space-y-3">
+            <a href="{{ url_for('main.index') }}" class="block text-sm font-semibold text-slate-800 py-2 hover:text-blue-600">Accueil</a>
+            <a href="{{ url_for('main.talents') }}" class="block text-sm font-semibold text-slate-800 py-2 hover:text-blue-600">Vivier des Talents</a>
+            <a href="{{ url_for('main.index') }}#zones-industrielles" class="block text-sm font-semibold text-slate-800 py-2 hover:text-blue-600">Pôles Industriels</a>
+            <div class="pt-3 border-t border-slate-100 space-y-2">
+                {% if current_user.is_authenticated %}
+                    <a href="{{ url_for('main.dashboard') }}" class="block text-center py-2 px-4 bg-slate-100 text-slate-800 font-semibold text-xs rounded-lg">Mon Espace ({{ current_user.role|capitalize }})</a>
+                    <a href="{{ url_for('main.logout') }}" class="block text-center py-2 px-4 text-red-600 font-semibold text-xs">Déconnexion</a>
+                {% else %}
+                    <a href="{{ url_for('main.login') }}" class="block text-center py-2.5 px-4 bg-slate-100 text-slate-800 font-semibold text-xs rounded-lg">Connexion</a>
+                    <a href="{{ url_for('main.register') }}" class="block text-center py-2.5 px-4 bg-blue-600 text-white font-semibold text-xs rounded-lg shadow-sm">Créer un Compte</a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <!-- Flash Messages Container -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4 w-full">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="space-y-2">
+                    {% for category, message in messages %}
+                        {% set bg_color = 'bg-blue-50 border-blue-200 text-blue-800' %}
+                        {% set icon = 'fa-circle-info text-blue-500' %}
+                        {% if category == 'success' %}
+                            {% set bg_color = 'bg-emerald-50 border-emerald-200 text-emerald-800' %}
+                            {% set icon = 'fa-circle-check text-emerald-500' %}
+                        {% elif category == 'danger' %}
+                            {% set bg_color = 'bg-red-50 border-red-200 text-red-800' %}
+                            {% set icon = 'fa-circle-exclamation text-red-500' %}
+                        {% elif category == 'warning' %}
+                            {% set bg_color = 'bg-amber-50 border-amber-200 text-amber-800' %}
+                            {% set icon = 'fa-triangle-exclamation text-amber-500' %}
+                        {% endif %}
+                        <div class="alert-box auto-dismiss flex items-center justify-between p-3.5 rounded-xl border {{ bg_color }} text-xs font-medium shadow-sm transition-opacity duration-300">
+                            <div class="flex items-center gap-2.5">
+                                <i class="fa-solid {{ icon }} text-sm"></i>
+                                <span>{{ message }}</span>
+                            </div>
+                            <button type="button" class="alert-close-btn opacity-60 hover:opacity-100 transition-opacity">
+                                <i class="fa-solid fa-xmark text-sm"></i>
+                            </button>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+    </div>
+
+    <!-- Main Dynamic Content Block -->
+    <main class="flex-grow">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 text-slate-400 text-xs border-t border-slate-800 mt-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+                
+                <!-- Col 1: Brand -->
+                <div class="space-y-3">
+                    <div class="flex items-center gap-2 text-white">
+                        <div class="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center text-white font-bold">
+                            <i class="fa-solid fa-gears text-sm text-amber-400"></i>
+                        </div>
+                        <span class="text-base font-extrabold tracking-tight">MaintTech Jobs Maroc</span>
+                    </div>
+                    <p class="text-slate-400 leading-relaxed text-xs">
+                        La plateforme B2B de référence dédiée au recrutement et à la mise en relation des Techniciens de Maintenance Industrielle au Maroc.
+                    </p>
+                    <div class="pt-2 text-slate-400 flex items-center gap-2">
+                        <span class="inline-block w-2 h-2 rounded-full bg-emerald-500"></span>
+                        <span>Plateforme active sur 7 régions industrielles</span>
+                    </div>
+                </div>
+
+                <!-- Col 2: Pôles Industriels Couverts -->
+                <div>
+                    <h4 class="text-white font-bold text-xs uppercase tracking-wider mb-3">Pôles Industriels Couverts</h4>
+                    <ul class="space-y-2 text-slate-400">
+                        <li><i class="fa-solid fa-angle-right text-[10px] text-blue-500 mr-1.5"></i> Tanger Automotive City & TFZ</li>
+                        <li><i class="fa-solid fa-angle-right text-[10px] text-blue-500 mr-1.5"></i> Casablanca (Midparc, Nouaceur, Ain Sebaa)</li>
+                        <li><i class="fa-solid fa-angle-right text-[10px] text-blue-500 mr-1.5"></i> Atlantic Free Zone Kénitra (Stellantis)</li>
+                        <li><i class="fa-solid fa-angle-right text-[10px] text-blue-500 mr-1.5"></i> Complexe OCP Jorf Lasfar & Safi</li>
+                        <li><i class="fa-solid fa-angle-right text-[10px] text-blue-500 mr-1.5"></i> Agropôle Meknès & Fès Shore</li>
+                    </ul>
+                </div>
+
+                <!-- Col 3: Spécialités Clés -->
+                <div>
+                    <h4 class="text-white font-bold text-xs uppercase tracking-wider mb-3">Spécialités Techniques</h4>
+                    <ul class="space-y-2 text-slate-400">
+                        <li><a href="{{ url_for('main.talents') }}?specialty=Automatisme" class="hover:text-blue-400 transition-colors">Automatisme & Robotique (Siemens, KUKA)</a></li>
+                        <li><a href="{{ url_for('main.talents') }}?specialty=Electromécanique" class="hover:text-blue-400 transition-colors">Électromécanique & Variateurs de Vitesse</a></li>
+                        <li><a href="{{ url_for('main.talents') }}?specialty=Maintenance Mécanique" class="hover:text-blue-400 transition-colors">Maintenance Mécanique & Lignage Laser</a></li>
+                        <li><a href="{{ url_for('main.talents') }}?specialty=Hydraulique/Pneumatique" class="hover:text-blue-400 transition-colors">Hydraulique Haute Pression & Festo</a></li>
+                        <li><a href="{{ url_for('main.talents') }}?specialty=CNC" class="hover:text-blue-400 transition-colors">Machines-Outils CNC (Fanuc, Heidenhain)</a></li>
+                    </ul>
+                </div>
+
+                <!-- Col 4: Accès Rapides & Comptes Démo -->
+                <div>
+                    <h4 class="text-white font-bold text-xs uppercase tracking-wider mb-3">Comptes Démo Rapides</h4>
+                    <div class="bg-slate-800/80 rounded-lg p-3 border border-slate-700/60 text-[11px] space-y-2">
+                        <div class="text-slate-300 font-semibold"><i class="fa-solid fa-building text-amber-400 mr-1"></i> Recruteur Démo:</div>
+                        <div class="font-mono text-slate-400 bg-slate-900/60 p-1.5 rounded">recruteur@renault-tanger.ma</div>
+                        <div class="text-slate-300 font-semibold pt-1"><i class="fa-solid fa-wrench text-blue-400 mr-1"></i> Technicien Démo:</div>
+                        <div class="font-mono text-slate-400 bg-slate-900/60 p-1.5 rounded">karim.alami@mainttech.ma</div>
+                        <div class="text-amber-300 text-[10px]">Mot de passe: Password123!</div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="pt-8 border-t border-slate-800 flex flex-col sm:flex-row justify-between items-center gap-4 text-slate-400 text-[11px]">
+                <p>&copy; 2026 MaintTech Jobs Maroc. Tous droits réservés.</p>
+                <div class="flex items-center gap-4">
+                    <span>Fait avec fierté pour l'industrie marocaine</span>
+                    <span class="text-slate-700">•</span>
+                    <a href="{{ url_for('main.talents') }}" class="hover:text-white transition-colors">Consulter les Techniciens</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Main Client Script -->
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

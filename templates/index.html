@@ -1,0 +1,420 @@
+{% extends "base.html" %}
+
+{% block title %}MaintTech Jobs Maroc | Plateforme des Techniciens de Maintenance Industrielle{% endblock %}
+
+{% block content %}
+<!-- ============================================================== -->
+<!-- HERO SECTION                                                    -->
+<!-- ============================================================== -->
+<section class="relative bg-slate-950 text-white overflow-hidden py-16 lg:py-24 border-b border-slate-800">
+    <!-- Background Industrial Pattern & Glow -->
+    <div class="absolute inset-0 dark-grid-pattern opacity-30 pointer-events-none"></div>
+    <div class="absolute -top-40 -right-40 w-96 h-96 bg-blue-600/20 rounded-full blur-3xl pointer-events-none"></div>
+    <div class="absolute -bottom-40 -left-40 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+            
+            <!-- Hero Left Content -->
+            <div class="lg:col-span-7 space-y-6">
+                <!-- Tag pill -->
+                <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/30 text-blue-400 text-xs font-semibold uppercase tracking-wider">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                    <span>Marché des Talents Techniques au Maroc</span>
+                </div>
+
+                <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-white leading-tight">
+                    Le Réseau N°1 des <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-sky-300 to-amber-400">Techniciens de Maintenance</span> Industrielle au Maroc.
+                </h1>
+
+                <p class="text-slate-300 text-sm sm:text-base leading-relaxed max-w-2xl">
+                    Connectez vos usines à Casablanca, Tanger Med, Kénitra et Meknès avec des techniciens d'élite en 
+                    <strong class="text-white">Automatisme (Siemens, Schneider)</strong>, <strong class="text-white">Électromécanique</strong>, <strong class="text-white">Hydraulique/Pneumatique</strong> et <strong class="text-white">Machines CNC</strong>.
+                </p>
+
+                <!-- Search Bar Container -->
+                <div class="bg-white/10 backdrop-blur-md p-2 rounded-2xl border border-white/15 shadow-2xl max-w-2xl">
+                    <form action="{{ url_for('main.talents') }}" method="GET" class="flex flex-col sm:flex-row gap-2">
+                        <div class="relative flex-grow">
+                            <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3.5 text-slate-400 text-sm"></i>
+                            <input type="text" name="search" placeholder="Compétence, automate (ex: TIA Portal, VFD, Lectra)..." 
+                                class="w-full pl-10 pr-4 py-2.5 bg-slate-900/80 border border-slate-700/80 rounded-xl text-xs sm:text-sm text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <div class="w-full sm:w-44">
+                            <select name="city" class="w-full px-3 py-2.5 bg-slate-900/80 border border-slate-700/80 rounded-xl text-xs sm:text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <option value="all">Toutes les Villes</option>
+                                <option value="Casablanca">Casablanca</option>
+                                <option value="Tanger">Tanger</option>
+                                <option value="Kénitra">Kénitra</option>
+                                <option value="Meknès">Meknès</option>
+                                <option value="Jorf Lasfar">Jorf Lasfar</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="px-6 py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs sm:text-sm rounded-xl transition-all shadow-md flex items-center justify-center gap-2 whitespace-nowrap">
+                            <span>Rechercher</span>
+                            <i class="fa-solid fa-arrow-right text-xs"></i>
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Trust stats row -->
+                <div class="pt-4 flex flex-wrap items-center gap-6 text-xs text-slate-400">
+                    <div class="flex items-center gap-2">
+                        <i class="fa-solid fa-certificate text-amber-400"></i>
+                        <span>Profils techniques certifiés</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <i class="fa-solid fa-bolt text-emerald-400"></i>
+                        <span>Disponibilité immédiate</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <i class="fa-solid fa-file-pdf text-red-400"></i>
+                        <span>CVs vérifiés consultables</span>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Hero Right Highlights / Quick Cards -->
+            <div class="lg:col-span-5 space-y-4">
+                <div class="bg-gradient-to-br from-slate-900/90 to-slate-800/90 border border-slate-700/80 rounded-2xl p-6 shadow-2xl relative">
+                    <div class="flex items-center justify-between pb-4 border-b border-slate-700/60 mb-4">
+                        <div class="flex items-center gap-2">
+                            <div class="w-3 h-3 rounded-full bg-emerald-400 animate-ping"></div>
+                            <span class="text-xs font-bold text-white uppercase tracking-wider">Activité En Direct</span>
+                        </div>
+                        <span class="text-[11px] text-slate-400">Écosystème Industriel Maroc</span>
+                    </div>
+
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between p-3 rounded-xl bg-slate-950/60 border border-slate-800">
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 rounded-lg bg-blue-500/20 text-blue-400 flex items-center justify-center text-xs font-bold">
+                                    <i class="fa-solid fa-microchip"></i>
+                                </div>
+                                <div>
+                                    <h4 class="text-xs font-bold text-white">Automatisme & Robotique</h4>
+                                    <p class="text-[11px] text-slate-400">Siemens S7-1500, KUKA, Fanuc</p>
+                                </div>
+                            </div>
+                            <span class="text-[11px] font-bold text-emerald-400">Tanger Med</span>
+                        </div>
+
+                        <div class="flex items-center justify-between p-3 rounded-xl bg-slate-950/60 border border-slate-800">
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 rounded-lg bg-amber-500/20 text-amber-400 flex items-center justify-center text-xs font-bold">
+                                    <i class="fa-solid fa-bolt"></i>
+                                </div>
+                                <div>
+                                    <h4 class="text-xs font-bold text-white">Électromécanique & VFD</h4>
+                                    <p class="text-[11px] text-slate-400">Schneider Altivar, GMAO Coswin</p>
+                                </div>
+                            </div>
+                            <span class="text-[11px] font-bold text-emerald-400">Midparc Casa</span>
+                        </div>
+
+                        <div class="flex items-center justify-between p-3 rounded-xl bg-slate-950/60 border border-slate-800">
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-xs font-bold">
+                                    <i class="fa-solid fa-gears"></i>
+                                </div>
+                                <div>
+                                    <h4 class="text-xs font-bold text-white">Maintenance Mécanique</h4>
+                                    <p class="text-[11px] text-slate-400">Lignage Laser, Réducteurs SEW</p>
+                                </div>
+                            </div>
+                            <span class="text-[11px] font-bold text-emerald-400">Kénitra AFZ</span>
+                        </div>
+                    </div>
+
+                    <div class="mt-5 pt-4 border-t border-slate-700/60 flex items-center justify-between text-xs">
+                        <span class="text-slate-300">Vous recrutez des techniciens ?</span>
+                        <a href="{{ url_for('main.talents') }}" class="text-blue-400 hover:text-blue-300 font-semibold flex items-center gap-1">
+                            <span>Voir le vivier</span>
+                            <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<!-- ============================================================== -->
+<!-- INDUSTRIAL STATS BAR                                           -->
+<!-- ============================================================== -->
+<section class="bg-white border-b border-slate-200 py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+            <div>
+                <p class="text-2xl sm:text-3xl font-extrabold text-slate-900">+6</p>
+                <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider mt-1">Techniciens Démo Actifs</p>
+            </div>
+            <div>
+                <p class="text-2xl sm:text-3xl font-extrabold text-blue-600">100%</p>
+                <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider mt-1">Profils Validés & Compétences Testées</p>
+            </div>
+            <div>
+                <p class="text-2xl sm:text-3xl font-extrabold text-slate-900">&lt; 48h</p>
+                <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider mt-1">Délai Moyen de Prise de Contact</p>
+            </div>
+            <div>
+                <p class="text-2xl sm:text-3xl font-extrabold text-amber-500">7 Régions</p>
+                <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider mt-1">Couverture des Pôles Industriels</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ============================================================== -->
+<!-- TOP 3 FEATURED TECHNICIANS (DYNAMICALLY RENDERED FROM DB)      -->
+<!-- ============================================================== -->
+<section class="py-16 bg-slate-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <div class="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-4">
+            <div>
+                <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-blue-100 text-blue-800 text-xs font-bold uppercase tracking-wider mb-2">
+                    <i class="fa-solid fa-star text-amber-500"></i> Profils Vedettes
+                </div>
+                <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+                    Techniciens Hautement Qualifiés en Démonstration
+                </h2>
+                <p class="text-slate-600 text-sm mt-1">
+                    Profils anonymisés disponibles immédiatement pour des missions de maintenance industrielle au Maroc.
+                </p>
+            </div>
+            <a href="{{ url_for('main.talents') }}" class="inline-flex items-center gap-2 px-5 py-2.5 bg-white border border-slate-300 hover:border-blue-500 text-slate-800 hover:text-blue-600 font-semibold text-xs rounded-xl shadow-sm transition-all whitespace-nowrap">
+                <span>Explorer tous les profils ({{ total_technicians }})</span>
+                <i class="fa-solid fa-arrow-right text-xs"></i>
+            </a>
+        </div>
+
+        <!-- 3 Dynamic Cards Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {% for talent in top_talents %}
+                <div class="talent-card bg-white rounded-2xl border border-slate-200 shadow-sm p-6 flex flex-col justify-between hover:border-blue-400">
+                    <div>
+                        <!-- Header with anonymous avatar -->
+                        <div class="flex items-start justify-between gap-4 mb-4">
+                            <div class="flex items-center gap-3">
+                                {% if talent.photo_filename %}
+                                    <img src="{{ url_for('main.serve_avatar', filename=talent.photo_filename) }}" alt="{{ talent.anonymous_name }}" class="w-12 h-12 rounded-xl object-cover shadow-sm border border-slate-200">
+                                {% else %}
+                                    <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-slate-900 to-blue-800 text-white flex items-center justify-center font-bold text-base shadow-sm">
+                                        {{ talent.anonymous_name[:2]|upper }}
+                                    </div>
+                                {% endif %}
+                                <div>
+                                    <h3 class="font-bold text-slate-900 text-base leading-tight">{{ talent.anonymous_name }}</h3>
+                                    <span class="text-xs font-bold text-blue-600 uppercase tracking-wide block mt-0.5">{{ talent.specialty }}</span>
+                                </div>
+                            </div>
+                            <span class="text-[11px] text-slate-400 flex items-center" title="Profil anonymisé pour préserver la confidentialité">
+                                <i class="fa-solid fa-shield-halved mr-1 text-emerald-500"></i> Vérifié
+                            </span>
+                        </div>
+
+                        <!-- Meta details -->
+                        <div class="flex flex-wrap items-center gap-2 text-xs text-slate-600 mb-4 pb-3 border-b border-slate-100">
+                            <span class="inline-flex items-center font-medium">
+                                <i class="fa-solid fa-location-dot text-red-500 mr-1.5"></i> {{ talent.city }}
+                            </span>
+                            <span class="text-slate-300">•</span>
+                            <span class="inline-flex items-center font-medium">
+                                <i class="fa-solid fa-briefcase text-slate-400 mr-1.5"></i> {{ talent.experience_years }} ans d'exp.
+                            </span>
+                            <span class="text-slate-300">•</span>
+                            {% if talent.mobility %}
+                                <span class="text-emerald-700 font-medium">Mobile Maroc</span>
+                            {% else %}
+                                <span class="text-slate-500">Régional</span>
+                            {% endif %}
+                        </div>
+
+                        <!-- Bio Snippet -->
+                        <p class="text-slate-600 text-xs line-clamp-3 mb-5 leading-relaxed">
+                            {{ talent.bio }}
+                        </p>
+
+                        <!-- Key Skills Tags -->
+                        <div class="mb-5">
+                            <p class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-2">Compétences Phares</p>
+                            <div class="flex flex-wrap gap-1.5">
+                                {% for skill in talent.skills_list[:4] %}
+                                    <span class="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-slate-100 text-slate-800 border border-slate-200">
+                                        <i class="fa-solid fa-microchip text-[10px] text-blue-500 mr-1.5"></i>
+                                        {{ skill }}
+                                    </span>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card Footer -->
+                    <div class="pt-4 border-t border-slate-100 flex items-center justify-between">
+                        {% if talent.cv_filename %}
+                            <span class="inline-flex items-center text-xs font-medium text-blue-700 bg-blue-50 px-2.5 py-1 rounded border border-blue-200">
+                                <i class="fa-solid fa-file-pdf mr-1 text-red-500"></i> CV Vérifié
+                            </span>
+                        {% endif %}
+                        <a href="{{ url_for('main.talent_detail', talent_id=talent.id) }}" class="ml-auto inline-flex items-center gap-1.5 px-4 py-2 bg-slate-900 hover:bg-blue-600 text-white font-semibold text-xs rounded-xl shadow-sm transition-colors">
+                            <span>Consulter</span>
+                            <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                        </a>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+    </div>
+</section>
+
+<!-- ============================================================== -->
+<!-- MOROCCAN INDUSTRIAL HUBS SECTION                               -->
+<!-- ============================================================== -->
+<section id="zones-industrielles" class="py-16 bg-white border-t border-slate-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center max-w-2xl mx-auto mb-12">
+            <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+                Présent au Cœur des Grands Pôles Industriels du Maroc
+            </h2>
+            <p class="text-slate-600 text-xs sm:text-sm mt-2">
+                Nos techniciens sont issus et formés dans les zones franches et parcs d'activités majeurs du Royaume.
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div class="p-5 rounded-2xl bg-slate-50 border border-slate-200 hover:border-blue-400 transition-colors">
+                <div class="w-10 h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center font-bold mb-3">
+                    <i class="fa-solid fa-car"></i>
+                </div>
+                <h3 class="font-bold text-slate-900 text-sm">Tanger Automotive City</h3>
+                <p class="text-xs text-slate-500 mt-1">Ecosystème Renault, TFZ, sous-traitants câblage et plasturgie automobile.</p>
+                <span class="inline-block mt-3 text-[11px] font-bold text-blue-600">Robotique & Automates S7</span>
+            </div>
+
+            <div class="p-5 rounded-2xl bg-slate-50 border border-slate-200 hover:border-blue-400 transition-colors">
+                <div class="w-10 h-10 rounded-xl bg-slate-900 text-white flex items-center justify-center font-bold mb-3">
+                    <i class="fa-solid fa-plane"></i>
+                </div>
+                <h3 class="font-bold text-slate-900 text-sm">Midparc Nouaceur (Casa)</h3>
+                <p class="text-xs text-slate-500 mt-1">Aéronautique, usinage de précision 5 axes, composites et mécanique fine.</p>
+                <span class="inline-block mt-3 text-[11px] font-bold text-blue-600">MOCN & Commandes Fanuc</span>
+            </div>
+
+            <div class="p-5 rounded-2xl bg-slate-50 border border-slate-200 hover:border-blue-400 transition-colors">
+                <div class="w-10 h-10 rounded-xl bg-amber-500 text-white flex items-center justify-center font-bold mb-3">
+                    <i class="fa-solid fa-industry"></i>
+                </div>
+                <h3 class="font-bold text-slate-900 text-sm">Atlantic Free Zone (Kénitra)</h3>
+                <p class="text-xs text-slate-500 mt-1">Ecosystème Stellantis, presses hydrauliques, lignes d'emboutissage.</p>
+                <span class="inline-block mt-3 text-[11px] font-bold text-amber-600">Hydraulique & Lignage</span>
+            </div>
+
+            <div class="p-5 rounded-2xl bg-slate-50 border border-slate-200 hover:border-blue-400 transition-colors">
+                <div class="w-10 h-10 rounded-xl bg-emerald-600 text-white flex items-center justify-center font-bold mb-3">
+                    <i class="fa-solid fa-flask"></i>
+                </div>
+                <h3 class="font-bold text-slate-900 text-sm">Jorf Lasfar & Chimie</h3>
+                <p class="text-xs text-slate-500 mt-1">Plateforme chimique OCP, énergie, métallurgie et maintenance lourde.</p>
+                <span class="inline-block mt-3 text-[11px] font-bold text-emerald-600">Électrotechnique HTA/BT</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ============================================================== -->
+<!-- FEATURES & HOW IT WORKS                                        -->
+<!-- ============================================================== -->
+<section id="comment-ca-marche" class="py-16 bg-slate-900 text-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center max-w-2xl mx-auto mb-12">
+            <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight">
+                Une Approche Pensée pour la Réactivité Industrielle
+            </h2>
+            <p class="text-slate-400 text-xs sm:text-sm mt-2">
+                Zéro friction : accès direct aux compétences techniques précises dont vos lignes ont besoin.
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="bg-slate-800/80 p-6 rounded-2xl border border-slate-700 space-y-3">
+                <div class="w-10 h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center font-bold text-base">
+                    1
+                </div>
+                <h3 class="text-base font-bold text-white">Recherche Multi-Critères</h3>
+                <p class="text-slate-400 text-xs leading-relaxed">
+                    Filtrez instantanément par automate (Siemens TIA Portal, Omron), variateur de fréquence, ville ou nombre d'années d'expérience.
+                </p>
+            </div>
+
+            <div class="bg-slate-800/80 p-6 rounded-2xl border border-slate-700 space-y-3">
+                <div class="w-10 h-10 rounded-xl bg-amber-500 text-white flex items-center justify-center font-bold text-base">
+                    2
+                </div>
+                <h3 class="text-base font-bold text-white">Profils Évalués & CVs</h3>
+                <p class="text-slate-400 text-xs leading-relaxed">
+                    Chaque technicien détaille ses machines maîtrisées (Lectra, Fanuc, KUKA, Festo) et dépose son CV complet vérifiable.
+                </p>
+            </div>
+
+            <div class="bg-slate-800/80 p-6 rounded-2xl border border-slate-700 space-y-3">
+                <div class="w-10 h-10 rounded-xl bg-emerald-600 text-white flex items-center justify-center font-bold text-base">
+                    3
+                </div>
+                <h3 class="text-base font-bold text-white">Mise en Relation Rapide</h3>
+                <p class="text-slate-400 text-xs leading-relaxed">
+                    Les recruteurs accèdent immédiatement aux contacts directs (téléphone, email) pour des entretiens ou des interventions d'urgence.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ============================================================== -->
+<!-- DUAL CALL TO ACTION BANNER                                     -->
+<!-- ============================================================== -->
+<section class="py-16 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            
+            <!-- Recruiter CTA -->
+            <div class="p-8 rounded-3xl bg-gradient-to-br from-slate-900 to-slate-800 text-white space-y-4 shadow-xl">
+                <span class="inline-flex items-center px-2.5 py-1 rounded-md bg-amber-500/20 text-amber-400 text-xs font-bold uppercase">
+                    Pour les Recruteurs & Usines
+                </span>
+                <h3 class="text-2xl font-extrabold">Vous avez un arrêt de ligne ou un besoin urgent ?</h3>
+                <p class="text-slate-300 text-xs leading-relaxed">
+                    Accédez aux profils complets, téléchargez leurs CVs et contactez directement les techniciens disponibles dans votre zone.
+                </p>
+                <div class="pt-2">
+                    <a href="{{ url_for('main.register') }}?role=recruiter" class="inline-flex items-center gap-2 px-5 py-2.5 bg-amber-500 hover:bg-amber-400 text-slate-900 font-bold text-xs rounded-xl transition-all shadow-md">
+                        <i class="fa-solid fa-building"></i>
+                        <span>Créer un Espace Recruteur</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Technician CTA -->
+            <div class="p-8 rounded-3xl bg-gradient-to-br from-blue-900 to-blue-800 text-white space-y-4 shadow-xl">
+                <span class="inline-flex items-center px-2.5 py-1 rounded-md bg-blue-400/20 text-blue-300 text-xs font-bold uppercase">
+                    Pour les Techniciens
+                </span>
+                <h3 class="text-2xl font-extrabold">Vous êtes électromécanicien, automaticien ou mécanicien ?</h3>
+                <p class="text-blue-100 text-xs leading-relaxed">
+                    Mettez en valeur vos certifications, vos machines maîtrisées et soyez chassé par les plus grandes usines au Maroc.
+                </p>
+                <div class="pt-2">
+                    <a href="{{ url_for('main.register') }}?role=technician" class="inline-flex items-center gap-2 px-5 py-2.5 bg-white hover:bg-blue-50 text-blue-900 font-bold text-xs rounded-xl transition-all shadow-md">
+                        <i class="fa-solid fa-wrench"></i>
+                        <span>Déposer mon Profil & CV</span>
+                    </a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,248 @@
+{% extends "base.html" %}
+
+{% block title %}Inscription | MaintTech Jobs Maroc{% endblock %}
+
+{% block content %}
+<div class="min-h-[calc(100vh-16rem)] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-slate-50">
+    <div class="max-w-xl w-full space-y-6">
+        
+        <!-- Header -->
+        <div class="text-center">
+            <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-slate-900 to-blue-700 flex items-center justify-center text-white mx-auto shadow-md mb-4">
+                <i class="fa-solid fa-user-plus text-lg text-amber-400"></i>
+            </div>
+            <h1 class="text-2xl font-extrabold text-slate-900 tracking-tight">
+                Créer votre Compte Professionnel
+            </h1>
+            <p class="text-xs text-slate-500 mt-1">
+                Rejoignez le réseau des professionnels de la maintenance industrielle au Maroc.
+            </p>
+        </div>
+
+        <!-- Registration Card -->
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 sm:p-8">
+            <form method="POST" action="{{ url_for('main.register') }}" id="register-form" class="space-y-6">
+                
+                <!-- Role Selector Tabs -->
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2 text-center">
+                        Choisissez votre profil :
+                    </label>
+                    <div class="grid grid-cols-2 gap-3 p-1.5 bg-slate-100 rounded-2xl border border-slate-200">
+                        <button type="button" id="tab-technician"
+                            class="role-tab flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-xs font-bold transition-all {% if role != 'recruiter' %}bg-white text-blue-700 shadow-sm border border-slate-200/80{% else %}text-slate-600 hover:text-slate-900{% endif %}">
+                            <i class="fa-solid fa-wrench"></i>
+                            <span>Je suis Technicien</span>
+                        </button>
+                        <button type="button" id="tab-recruiter"
+                            class="role-tab flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-xs font-bold transition-all {% if role == 'recruiter' %}bg-white text-amber-700 shadow-sm border border-slate-200/80{% else %}text-slate-600 hover:text-slate-900{% endif %}">
+                            <i class="fa-solid fa-building"></i>
+                            <span>Je suis Recruteur</span>
+                        </button>
+                    </div>
+                    <input type="hidden" name="role" id="role-input" value="{{ role or 'technician' }}">
+                </div>
+
+                <!-- Common Credentials -->
+                <div class="space-y-4 pt-2">
+                    <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Identifiants de Connexion</h3>
+                    
+                    <div>
+                        <label for="email" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                            Adresse Email <span class="text-red-500">*</span>
+                        </label>
+                        <div class="relative">
+                            <i class="fa-solid fa-envelope absolute left-3.5 top-3.5 text-slate-400 text-xs"></i>
+                            <input type="email" id="email" name="email" value="{{ email or '' }}" required placeholder="nom@domaine.ma"
+                                class="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs sm:text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:bg-white transition-all">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label for="password" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                                Mot de passe <span class="text-red-500">*</span>
+                            </label>
+                            <div class="relative">
+                                <i class="fa-solid fa-lock absolute left-3.5 top-3.5 text-slate-400 text-xs"></i>
+                                <input type="password" id="password" name="password" required minlength="6" placeholder="Min. 6 caractères"
+                                    class="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs sm:text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:bg-white transition-all">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label for="confirm_password" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                                Confirmer mot de passe <span class="text-red-500">*</span>
+                            </label>
+                            <div class="relative">
+                                <i class="fa-solid fa-lock absolute left-3.5 top-3.5 text-slate-400 text-xs"></i>
+                                <input type="password" id="confirm_password" name="confirm_password" required minlength="6" placeholder="••••••••"
+                                    class="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs sm:text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:bg-white transition-all">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TECHNICIAN DYNAMIC FIELDS -->
+                <div id="technician-fields" class="space-y-4 pt-2 border-t border-slate-100 {% if role == 'recruiter' %}hidden{% endif %}">
+                    <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Informations du Technicien</h3>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label for="full_name" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                                Nom Complet <span class="text-red-500">*</span>
+                            </label>
+                            <input type="text" id="full_name" name="full_name" placeholder="Ex: Karim Alami"
+                                class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs sm:text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:bg-white transition-all">
+                        </div>
+
+                        <div>
+                            <label for="tech_city" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                                Ville Principale
+                            </label>
+                            <select id="tech_city" name="city"
+                                class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs sm:text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:bg-white transition-all">
+                                <option value="Casablanca">Casablanca</option>
+                                <option value="Tanger">Tanger</option>
+                                <option value="Kénitra">Kénitra</option>
+                                <option value="Meknès">Meknès</option>
+                                <option value="Fès">Fès</option>
+                                <option value="Rabat">Rabat</option>
+                                <option value="Jorf Lasfar">Jorf Lasfar</option>
+                                <option value="Berrechid">Berrechid</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label for="specialty" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                                Spécialité Clé
+                            </label>
+                            <select id="specialty" name="specialty"
+                                class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs sm:text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:bg-white transition-all">
+                                <option value="Electromécanique">Electromécanique</option>
+                                <option value="Automatisme">Automatisme & Robotique</option>
+                                <option value="Maintenance Mécanique">Maintenance Mécanique</option>
+                                <option value="Hydraulique/Pneumatique">Hydraulique/Pneumatique</option>
+                                <option value="CNC">CNC / Commande Numérique</option>
+                                <option value="Découpe Automatique (Lectra)">Découpe Automatique (Lectra)</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label for="experience_years" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                                Expérience (Années)
+                            </label>
+                            <input type="number" id="experience_years" name="experience_years" min="0" max="45" value="2"
+                                class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs sm:text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:bg-white transition-all">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- RECRUITER DYNAMIC FIELDS -->
+                <div id="recruiter-fields" class="space-y-4 pt-2 border-t border-slate-100 {% if role != 'recruiter' %}hidden{% endif %}">
+                    <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Informations Entreprise & Usine</h3>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label for="company_name" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                                Nom de l'Entreprise / Usine <span class="text-red-500">*</span>
+                            </label>
+                            <input type="text" id="company_name" name="company_name" placeholder="Ex: Société Marocaine d'Equipement"
+                                class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs sm:text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:bg-white transition-all">
+                        </div>
+
+                        <div>
+                            <label for="industry_type" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                                Secteur Industriel
+                            </label>
+                            <select id="industry_type" name="industry_type"
+                                class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs sm:text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:bg-white transition-all">
+                                <option value="Automobile">Automobile (Tanger/Kénitra)</option>
+                                <option value="Aéronautique">Aéronautique (Midparc Nouaceur)</option>
+                                <option value="Agroalimentaire">Agroalimentaire</option>
+                                <option value="Textile & Cuir">Textile & Cuir (Lectra)</option>
+                                <option value="Chimie & Métallurgie">Chimie & Métallurgie (OCP)</option>
+                                <option value="Autre">Autre Industrie</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label for="rec_city" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                                Ville d'Implantation
+                            </label>
+                            <input type="text" id="rec_city" name="city" placeholder="Ex: Tanger, Casablanca, Kénitra"
+                                class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs sm:text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:bg-white transition-all">
+                        </div>
+
+                        <div>
+                            <label for="rec_phone" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                                Téléphone de Contact RH
+                            </label>
+                            <input type="text" id="rec_phone" name="phone" placeholder="+212 5 XX XX XX XX"
+                                class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs sm:text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:bg-white transition-all">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Submit Button -->
+                <div class="pt-2">
+                    <button type="submit" id="submit-btn" class="w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs sm:text-sm rounded-xl shadow-md transition-colors flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-user-check text-xs"></i>
+                        <span id="submit-btn-text">Créer mon Compte Technicien</span>
+                    </button>
+                </div>
+
+            </form>
+
+            <div class="mt-6 pt-5 border-t border-slate-100 text-center text-xs text-slate-600">
+                <span>Vous possédez déjà un compte ?</span>
+                <a href="{{ url_for('main.login') }}" class="font-bold text-blue-600 hover:underline ml-1">
+                    Connectez-vous ici
+                </a>
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const tabTechnician = document.getElementById('tab-technician');
+        const tabRecruiter = document.getElementById('tab-recruiter');
+        const roleInput = document.getElementById('role-input');
+        const techFields = document.getElementById('technician-fields');
+        const recFields = document.getElementById('recruiter-fields');
+        const submitBtnText = document.getElementById('submit-btn-text');
+
+        function setRole(role) {
+            roleInput.value = role;
+
+            if (role === 'technician') {
+                tabTechnician.className = 'role-tab flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-xs font-bold transition-all bg-white text-blue-700 shadow-sm border border-slate-200/80';
+                tabRecruiter.className = 'role-tab flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-xs font-bold transition-all text-slate-600 hover:text-slate-900';
+                techFields.classList.remove('hidden');
+                recFields.classList.add('hidden');
+                submitBtnText.textContent = 'Créer mon Compte Technicien';
+            } else {
+                tabRecruiter.className = 'role-tab flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-xs font-bold transition-all bg-white text-amber-700 shadow-sm border border-slate-200/80';
+                tabTechnician.className = 'role-tab flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-xs font-bold transition-all text-slate-600 hover:text-slate-900';
+                recFields.classList.remove('hidden');
+                techFields.classList.add('hidden');
+                submitBtnText.textContent = 'Créer mon Espace Entreprise Recruteur';
+            }
+        }
+
+        tabTechnician.addEventListener('click', () => setRole('technician'));
+        tabRecruiter.addEventListener('click', () => setRole('recruiter'));
+
+        // Initialize based on initial value
+        setRole(roleInput.value || 'technician');
+    });
+</script>
+{% endblock %}

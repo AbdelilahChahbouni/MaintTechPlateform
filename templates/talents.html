@@ -1,0 +1,267 @@
+{% extends "base.html" %}
+
+{% block title %}Vivier des Talents de Maintenance Industrielle | MaintTech Jobs Maroc{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<div class="bg-slate-900 text-white py-10 border-b border-slate-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div>
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/20 text-blue-400 text-xs font-semibold mb-2">
+                    <i class="fa-solid fa-users-gear"></i> Moteur de Recherche en Direct
+                </div>
+                <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight">
+                    Vivier des Talents de Maintenance Industrielle
+                </h1>
+                <p class="text-slate-400 text-xs sm:text-sm mt-1">
+                    Filtrez en temps réel les techniciens qualifiés par spécialité, ville, expérience et compétences spécifiques.
+                </p>
+            </div>
+
+            <!-- Recruiter status card -->
+            {% if current_user.is_authenticated and current_user.is_recruiter %}
+                <div class="bg-emerald-950/70 border border-emerald-500/30 rounded-xl p-3 flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center">
+                        <i class="fa-solid fa-unlock"></i>
+                    </div>
+                    <div>
+                        <span class="text-xs font-bold text-emerald-300 block">Mode Recruteur Actif</span>
+                        <span class="text-[11px] text-emerald-400/80">Coordonnées et CVs directs débloqués</span>
+                    </div>
+                </div>
+            {% else %}
+                <div class="bg-slate-800/80 border border-slate-700 rounded-xl p-3 flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-lg bg-amber-500/20 text-amber-400 flex items-center justify-center">
+                        <i class="fa-solid fa-lock text-xs"></i>
+                    </div>
+                    <div>
+                        <span class="text-xs font-bold text-slate-200 block">Coordonnées Masquées</span>
+                        <a href="{{ url_for('main.login') }}" class="text-[11px] text-blue-400 hover:underline">Connectez-vous pour contacter directement les talents</a>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Main Talent Engine Section -->
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+    <!-- Filter Control Panel -->
+    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 mb-8">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-4 items-center">
+            
+            <!-- Search Keyword Input (4 cols) -->
+            <div class="lg:col-span-4">
+                <label for="filter-search" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                    <i class="fa-solid fa-magnifying-glass text-slate-400 mr-1"></i> Recherche Mots-Clés
+                </label>
+                <input type="text" id="filter-search" placeholder="Automate, variateur, Lectra, CNC, ville..." 
+                    class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs sm:text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:bg-white transition-all">
+            </div>
+
+            <!-- Specialty Select (3 cols) -->
+            <div class="lg:col-span-3">
+                <label for="filter-specialty" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                    <i class="fa-solid fa-wrench text-slate-400 mr-1"></i> Spécialité
+                </label>
+                <select id="filter-specialty" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs sm:text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:bg-white transition-all">
+                    <option value="all">Toutes les spécialités</option>
+                    {% for sp in specialties %}
+                        <option value="{{ sp }}">{{ sp }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- City Select (2 cols) -->
+            <div class="lg:col-span-2">
+                <label for="filter-city" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                    <i class="fa-solid fa-location-dot text-slate-400 mr-1"></i> Ville
+                </label>
+                <select id="filter-city" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs sm:text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:bg-white transition-all">
+                    <option value="all">Toutes les villes</option>
+                    {% for city in cities %}
+                        <option value="{{ city }}">{{ city }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Experience Filter (2 cols) -->
+            <div class="lg:col-span-2">
+                <label for="filter-experience" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                    <i class="fa-solid fa-briefcase text-slate-400 mr-1"></i> Expérience Min.
+                </label>
+                <select id="filter-experience" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs sm:text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:bg-white transition-all">
+                    <option value="all">Tous niveaux</option>
+                    <option value="2">2+ ans</option>
+                    <option value="5">5+ ans (Senior)</option>
+                    <option value="8">8+ ans (Expert)</option>
+                </select>
+            </div>
+
+            <!-- Reset Button (1 col) -->
+            <div class="lg:col-span-1 flex items-end">
+                <button type="button" id="btn-reset-filters" title="Réinitialiser les filtres" 
+                    class="w-full py-2.5 px-3 bg-slate-100 hover:bg-slate-200 text-slate-600 hover:text-slate-900 font-bold rounded-xl text-xs transition-colors flex items-center justify-center">
+                    <i class="fa-solid fa-rotate-left"></i>
+                </button>
+            </div>
+
+        </div>
+
+        <!-- Filter Sub-Row (Mobility Checkbox & Live Status) -->
+        <div class="mt-4 pt-3 border-t border-slate-100 flex flex-wrap items-center justify-between gap-3 text-xs">
+            <label class="inline-flex items-center gap-2 cursor-pointer select-none text-slate-700 font-medium">
+                <input type="checkbox" id="filter-mobility" class="w-4 h-4 text-blue-600 rounded border-slate-300 focus:ring-blue-500">
+                <span>Uniquement les techniciens mobiles géographiquement (Maroc entier)</span>
+            </label>
+
+            <div class="flex items-center gap-2 text-slate-500">
+                <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                <span>Filtrage instantané sans rechargement de page (Fetch API)</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Results Status Bar -->
+    <div class="flex items-center justify-between mb-6">
+        <div class="flex items-center gap-3">
+            <h2 class="text-base font-bold text-slate-900">
+                Résultats (<span id="talent-count" class="text-blue-600 font-extrabold">{{ initial_talents|length }}</span> techniciens)
+            </h2>
+            <!-- Loading Indicator -->
+            <div id="talents-loading" class="hidden flex items-center gap-2 text-blue-600 text-xs font-semibold">
+                <i class="fa-solid fa-circle-notch fa-spin"></i>
+                <span>Mise à jour en direct...</span>
+            </div>
+        </div>
+
+        <span class="text-xs text-slate-400">Triés par années d'expérience</span>
+    </div>
+
+    <!-- Empty State -->
+    <div id="talents-empty-state" class="hidden bg-white rounded-2xl border border-dashed border-slate-300 p-12 text-center my-6">
+        <div class="w-16 h-16 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center mx-auto mb-4 text-2xl">
+            <i class="fa-solid fa-sliders"></i>
+        </div>
+        <h3 class="text-base font-bold text-slate-800">Aucun technicien ne correspond à ces critères</h3>
+        <p class="text-xs text-slate-500 max-w-md mx-auto mt-1 mb-4">
+            Essayez d'élargir votre recherche, de changer de ville ou de réinitialiser les filtres pour afficher l'ensemble des candidats disponibles.
+        </p>
+        <button type="button" onclick="document.getElementById('btn-reset-filters').click()" class="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs rounded-xl shadow-sm transition-colors">
+            <i class="fa-solid fa-rotate-left"></i>
+            <span>Réinitialiser les filtres</span>
+        </button>
+    </div>
+
+    <!-- Dynamic Talent Cards Grid -->
+    <div id="talents-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {% for talent in initial_talents %}
+            <div class="talent-card bg-white rounded-xl border border-slate-200/90 shadow-sm p-6 flex flex-col justify-between hover:border-blue-400 transition-all duration-200">
+                <div>
+                    <!-- Header: Avatar & Info -->
+                    <div class="flex items-start justify-between gap-4 mb-4">
+                        <div class="flex items-center gap-3">
+                            {% if talent.photo_filename %}
+                                <img src="{{ url_for('main.serve_avatar', filename=talent.photo_filename) }}" alt="{{ talent.full_name }}" class="w-12 h-12 rounded-xl object-cover shadow-sm border border-slate-200">
+                            {% else %}
+                                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-slate-900 to-blue-900 text-white flex items-center justify-center font-bold text-lg shadow-sm">
+                                    {% if current_user.is_authenticated and current_user.is_recruiter %}
+                                        {{ talent.full_name[:2]|upper }}
+                                    {% else %}
+                                        {{ talent.anonymous_name[:2]|upper }}
+                                    {% endif %}
+                                </div>
+                            {% endif %}
+                            <div>
+                                <h3 class="font-bold text-slate-900 text-base leading-tight">
+                                    {% if current_user.is_authenticated and current_user.is_recruiter %}
+                                        {{ talent.full_name }}
+                                    {% else %}
+                                        {{ talent.anonymous_name }}
+                                    {% endif %}
+                                </h3>
+                                <p class="text-xs font-semibold text-blue-600 uppercase tracking-wider mt-0.5">{{ talent.specialty }}</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            {% if current_user.is_authenticated and current_user.is_recruiter %}
+                                <span class="text-[11px] text-emerald-600 font-medium flex items-center">
+                                    <i class="fa-solid fa-phone text-[10px] mr-1"></i> Direct RH
+                                </span>
+                            {% else %}
+                                <span class="text-[11px] text-slate-500 flex items-center" title="Connectez-vous en tant que recruteur pour voir les coordonnées directes">
+                                    <i class="fa-solid fa-lock text-[10px] mr-1 text-amber-500"></i> Contact masqué
+                                </span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Meta badges -->
+                    <div class="flex flex-wrap items-center gap-2 text-xs text-slate-600 mb-4 pb-3 border-b border-slate-100">
+                        <span class="inline-flex items-center font-medium text-slate-700">
+                            <i class="fa-solid fa-location-dot text-red-500 mr-1.5"></i> {{ talent.city }}
+                        </span>
+                        <span class="text-slate-300">•</span>
+                        <span class="inline-flex items-center font-medium text-slate-700">
+                            <i class="fa-solid fa-briefcase text-slate-400 mr-1.5"></i> {{ talent.experience_years }} ans d'exp.
+                        </span>
+                        <span class="text-slate-300">•</span>
+                        {% if talent.mobility %}
+                            <span class="inline-flex items-center text-xs font-medium text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
+                                <i class="fa-solid fa-check text-[10px] mr-1"></i> Mobile
+                            </span>
+                        {% else %}
+                            <span class="inline-flex items-center text-xs font-medium text-slate-600 bg-slate-100 px-2.5 py-0.5 rounded-full">
+                                <i class="fa-solid fa-location-pin text-[10px] mr-1"></i> Fixe
+                            </span>
+                        {% endif %}
+                    </div>
+
+                    <!-- Bio Snippet -->
+                    <p class="text-slate-600 text-xs line-clamp-2 mb-4 leading-relaxed">
+                        {{ talent.bio or "Technicien de maintenance industrielle qualifié et disponible." }}
+                    </p>
+
+                    <!-- Key Skills Tags -->
+                    <div class="mb-5">
+                        <p class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-2">Compétences Techniques</p>
+                        <div class="flex flex-wrap gap-1.5">
+                            {% for skill in talent.skills_list[:4] %}
+                                <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-medium bg-slate-100 text-slate-800 border border-slate-200">
+                                    <i class="fa-solid fa-microchip text-[10px] text-blue-500 mr-1.5"></i>
+                                    {{ skill }}
+                                </span>
+                            {% endfor %}
+                            {% if talent.skills_list|length > 4 %}
+                                <span class="inline-flex items-center px-2 py-1 rounded-md text-xs font-semibold bg-blue-50 text-blue-700">
+                                    +{{ talent.skills_list|length - 4 }}
+                                </span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Footer Actions -->
+                <div class="pt-4 border-t border-slate-100 flex items-center justify-between gap-3">
+                    {% if talent.cv_filename %}
+                        <span class="inline-flex items-center text-xs font-medium text-blue-700 bg-blue-50 px-2 py-0.5 rounded border border-blue-200">
+                            <i class="fa-solid fa-file-pdf mr-1 text-red-500"></i> CV Disponible
+                        </span>
+                    {% endif %}
+                    <a href="{{ url_for('main.talent_detail', talent_id=talent.id) }}" class="ml-auto inline-flex items-center justify-center px-4 py-2 bg-slate-900 hover:bg-blue-600 text-white text-xs font-semibold rounded-lg shadow-sm transition-colors duration-150">
+                        <span>Voir le Profil</span>
+                        <i class="fa-solid fa-arrow-right ml-1.5 text-[11px]"></i>
+                    </a>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/talents.js') }}"></script>
+{% endblock %}
